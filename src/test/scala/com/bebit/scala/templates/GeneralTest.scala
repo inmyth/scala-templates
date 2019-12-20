@@ -1,21 +1,22 @@
 package com.bebit.scala.templates
 
+import com.github.tototoshi.csv.CSVReader
 import monix.eval.Task
+import org.scalamock.scalatest.AsyncMockFactory
 import org.scalatest.flatspec.AsyncFlatSpec
 
 import scala.collection.mutable
 
-class GeneralTest extends AsyncFlatSpec{
+class GeneralTest extends AsyncFlatSpec with AsyncMockFactory{
   import monix.execution.Scheduler.Implicits.global
 
   def addSoon(addends: Int*): Task[Int] = Task { addends.sum }
 
   behavior of "addSoon"
 
+  // this is a concurrent test
   it should "eventually compute a sum of passed Ints" in {
     val futureSum: Task[Int] = addSoon(1, 2)
-    // You can map assertions onto a Future, then return
-    // the resulting Future[Assertion] to ScalaTest:
     val z = futureSum.runToFuture
     z map { sum => assert(sum == 3) }
   }
@@ -34,4 +35,10 @@ class GeneralTest extends AsyncFlatSpec{
       emptyStack.pop()
     }
   }
+
+
+
+
+
+
 }
