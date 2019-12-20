@@ -18,18 +18,18 @@ object Workflow extends App{
     def parseCSV(in: List[List[String]]) = in.map(toDeleteKey)
 
     // this is the composition of the program
-    val compose = for {
+    val compose1 = for {
       f1 <- Task.now {
         List (
           List("user_id", "123456789", "visit_id", "0"),
           List("user_id", "aaaaa", "visit_id", "0")
         )
       }
-      f2 <- Task{ parseCSV(f1) }
+      f2 <- Task{ parseCSV(f1) } onErrorRecover { case e => List()}
       // we add next process here
     } yield f2
 
-    compose.runToFuture.onComplete {
+    compose1.runToFuture.onComplete {
 
       case Success(value) => println(value)
 

@@ -27,6 +27,6 @@ class WorkflowTest extends AsyncFlatSpec with AsyncMockFactory{
       )
     )
 
-    assert(mockedCSVReader.all().map(toDeleteKey).size == 2)
+    assert(mockedCSVReader.all().map(toDeleteKey).head.userId == "user_id")
   }
 }
