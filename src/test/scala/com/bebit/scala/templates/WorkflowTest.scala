@@ -5,7 +5,7 @@ import org.scalamock.scalatest.AsyncMockFactory
 import org.scalatest.flatspec.AsyncFlatSpec
 
 class WorkflowTest extends AsyncFlatSpec with AsyncMockFactory{
-  import Workflow._
+  import WorkflowRecovery._
 
   behavior of "parseCSV"
 

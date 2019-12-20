@@ -25,7 +25,7 @@ object Workflow extends App{
           List("user_id", "aaaaa", "visit_id", "0")
         )
       }
-      f2 <- Task{ parseCSV(f1) } onErrorRecover { case e => List()}
+      f2 <- Task{ parseCSV(f1) }
       // we add next process here
     } yield f2
 
