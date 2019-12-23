@@ -1,4 +1,5 @@
-package com.bebit.scala.templates
+package com.bebit.scala.templates.task
+
 import monix.eval.Task
 
 import scala.util.{Failure, Success}

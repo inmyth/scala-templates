@@ -1,11 +1,12 @@
-package com.bebit.scala.templates
+package com.bebit.scala.templates.task
+
 import monix.eval.Task
 
 import scala.util.{Failure, Success}
 
 /*
   A program to demonstrate a simple workflow.
-  In Scala we can compose executions from start to finish with Future or Task (Monix only).
+  In Scala we can compose executions from start to finish with Future or Task (Monix).
  */
 object Workflow extends App{
 

@@ -21,6 +21,9 @@ String method(String s) {
 - [Monad](https://medium.com/beingprofessional/understanding-functor-and-monad-with-a-bag-of-peanuts-8fa702b3f69e) 
 - Operations (tutorials: [AlvinAlexander](http://allaboutscala.com/#chapter-2-learning-scala-basics), [AllAboutScala](http://allaboutscala.com/#chapter-2-learning-scala-basics))
 
+Cheatsheet:
+- Functor : anything with map
+- Monad : functor with flatmap
 
 
  
@@ -42,7 +45,7 @@ In general concurrency task can be divided into four:
     - Use Case: Passing requests in web server
     - Tools: JS Promise, Java and Scala Future, or Scala Task 
 - Asynchronous & multiple values
-    - Use Case: Iterating data from a very big file or an infinite list and sending them to database
+    - Use Case: Iterating data from a very big file or an infinite list (streams) and sending them to database
     - Tools: Reactive Streams (RxJava) 
      
 ### Scala Future
@@ -66,7 +69,14 @@ Or we can resolve it like this
     }
 
 ``` 
-
+But most importantly we can compose it with for-comprehension
+```$xslt
+    val composition = for {
+      f1 <- Future{ 3 }
+      f2 <- Future{ f1 + 50 }
+    } yield f2 
+    composition.map(p => ...) // p will be 53
+```
 
 
 

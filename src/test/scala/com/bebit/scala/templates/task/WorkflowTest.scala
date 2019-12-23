@@ -1,11 +1,11 @@
-package com.bebit.scala.templates
+package com.bebit.scala.templates.task
 
 import com.github.tototoshi.csv.CSVReader
 import org.scalamock.scalatest.AsyncMockFactory
 import org.scalatest.flatspec.AsyncFlatSpec
 
 class WorkflowTest extends AsyncFlatSpec with AsyncMockFactory{
-  import WorkflowRecovery._
+  import com.bebit.scala.templates.task.WorkflowRecovery._
 
   behavior of "parseCSV"
 
