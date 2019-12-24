@@ -23,7 +23,7 @@ object Workflow extends App{
       f1 <- Task.now {
         List (
           List("user_id", "123456789", "visit_id", "0"),
-          List("user_id", "aaaaa", "visit_id", "0")
+          List("user_id", "888", "visit_id", "0")
         )
       }
       f2 <- Task{ parseCSV(f1) }
@@ -38,6 +38,11 @@ object Workflow extends App{
       case Failure(exception) => println(exception)
 
     }
+
+
+    // ... or resolve it like this
+    compose1.runToFuture.map(value => println(value)) recover { case exception => println(exception)}
+
 
 
 

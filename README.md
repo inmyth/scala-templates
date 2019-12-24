@@ -28,7 +28,7 @@ Cheatsheet:
 
  
 ## Concurrency
-In general concurrency task can be divided into four:
+In general concurrency task can be divided into four regions:
 
 |              | Single        | Multiple  |
 | ------------ |:-------------:| :-----:|

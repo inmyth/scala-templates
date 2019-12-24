@@ -1,12 +1,17 @@
 package com.bebit.scala.templates.observable
 
 import java.io.File
+
 import com.github.tototoshi.csv.CSVReader
 import monix.eval.Task
+
 import scala.concurrent.Await
 import monix.reactive._
+
 import concurrent.duration.{Duration, _}
 import scala.language.postfixOps
+import scala.util.{Failure, Success, Try}
+
 object ObsDeleteGram extends App{
 
   /*
@@ -20,7 +25,6 @@ object ObsDeleteGram extends App{
   - updateUserInfo
   - updateGram
 
-
   */
 
   import monix.execution.Scheduler.Implicits.global
@@ -29,8 +33,7 @@ object ObsDeleteGram extends App{
 
   def simFetch(i : Int, time: Int) = Task {
     Thread.sleep(time)
-    println(s"Fetced $i as $i-fetch")
-
+    println(s"Fetched $i as $i-fetch")
     i
   }
 
@@ -74,22 +77,19 @@ object ObsDeleteGram extends App{
       .dump("finish")
       .completedL
 
-    //  val consumer: Consumer[String, String] =
-    //    Consumer.foldLeft("")(_ + _)
-    //  stream.foreach(println)
 
     Await.ready(f.runToFuture, Duration.Inf)
   }
 
-
-  val reader = CSVReader.open(new File("sample.csv"))
+  case class DeleteKey(userId: String, timeUsec: Long, visitId: String, seqNo: Int)
+  def toDeleteKey (in : List[String]) : DeleteKey = DeleteKey(in.head, in(1).toLong, in(2), in.last.toInt)
+  val reader = CSVReader.open(getClass.getResource("/sample.csv").getFile)
   val csvStream = Observable.fromIterable(reader.toStream)
     .dump("start")
     .asyncBoundary(OverflowStrategy.BackPressure(2))
-    .mapEval(i => Task {
-
-      println(s"Processing $i"); i
-    }.delayExecution(20000.millis))
+      .mapEval(i => (Try{Task(toDeleteKey(i))}.getOrElse(Task.raiseError(new Exception("bad data")))).attempt)
+      .collect{case Left(value) => value }
+      .mapEval(e => Task { println(e) })
       .completedL
 
 
