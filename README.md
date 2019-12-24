@@ -55,7 +55,7 @@ Scala Future is simple
 ```$xslt
    Future{ ... }
 ```
-To resolve it we can apply higher-order functions like map or foreach
+To resolve it we use higher-order functions like map or foreach
 ```$xslt
    Future{ 1 }. map(p => ...) // 1 will arrive in p
 ```
@@ -63,22 +63,56 @@ To resolve it we can apply higher-order functions like map or foreach
 Or we can resolve it like this
 ```$xslt
 
-   Future{1/0}.onComplete {
+   Future{ 1/0 }.onComplete {
       case Success(p) => 
       case Failure(e) => 
     }
 
 ``` 
-But most importantly we can compose it with for-comprehension
+And we can compose it with for-comprehension
 ```$xslt
     val composition = for {
       f1 <- Future{ 3 }
       f2 <- Future{ f1 + 50 }
-    } yield f2 
-    composition.map(p => ...) // p will be 53
+      f3 <- Future { f2 + f1 } // any Future can get the results from previous Futures, in this case f1 and f2
+    } yield (f2, f3) // yield returns the value
+    composition.map(p => ...) // what is p ?
 ```
 
+### The problem with Scala's default Future
 
+Short answer: It is eagerly evaluated.
+
+Long answer: It breaks [referential transparency](https://nrinaudo.github.io/scala-best-practices/definitions/referential_transparency.html). 
+
+Referential transparency means that any expression can be replaced by its value.
+Consider this code:
+```$xslt
+  val f = Future {
+    println("Hello")
+    67
+  }
+
+  val composition = for {
+    f1 <- f
+    f2 <- f
+  } yield (f1, f2)
+
+  composition.foreach(println)
+/*
+    Hello
+    (67,67)
+*/
+```
+We have a Future that contains a print "Hello" and return value 67. We assign it to `f`. Then we use `f` twice in a future comprehension. 
+By intuition we should see "Hello" twice. But it is only printed once. 
+This happens because Future is resolved by the time it is declared in the variable and the result is memoized. 
+So `f` is not equivalent to the Future but the result of the Future. That's why it breaks the referential transparency. 
+For this reason we are going to use other libraries like Monix or ZIO which has good mapping between Future and Task (basically you can replace "Future" with "Task" in the code and it will still be okay).
+
+### Observable
+
+Observable evaluates an element in a collection to the end of the process before moving to the next element. 
 
 
 
