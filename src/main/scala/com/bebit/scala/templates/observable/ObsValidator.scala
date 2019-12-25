@@ -26,14 +26,16 @@ import scala.reflect.io.Path
  */
 object ObsValidator extends App{
 
-
-    val reader = CSVReader.open(getClass.getResource("/sample.csv").getFile)
+    val fileName = "/1575021601-cli_t-30_template.csv"
+    val reader = CSVReader.open(getClass.getResource(fileName).getFile)
 
     val csvStream = Observable.fromIterable(reader.toStream)
       .dump("start")
-      .foreachL(println)
-      .runToFuture
-
+      .mapEval(p => (if(p.head == "サービスID") Task.raiseError(new Exception("header")) else Task.now(p))
+        .attempt)
+      .collect{ case Right(v) => v}
+        .foreachL(println)
+        .runToFuture
     Await.ready(csvStream, Duration.Inf)
 
 
