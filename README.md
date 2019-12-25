@@ -120,12 +120,12 @@ Observable evaluates an element in a collection to the end of the process before
 Read this [first](https://gist.github.com/djspiewak/46b543800958cf61af6efa8e072bfd5c). 
 
 Threads are expensive and not infinite. They come from thread pool which requires allocation.
-In most cases we define an ExecutorService but in cases where it is not explicitly needed Java will use a thread pool based on ForkJoinPool. (Read about [it and it's work stealing algorithm](https://www.baeldung.com/java-fork-join))  
-Just note that thread pool should be ideal for the purpose of the task which can be classified as:
-- CPU-bound  (computation, image processing, file read)
-- Non-blocking IO (web socket communication)
-- Blocking IO (database query using JDBC)
+In most cases we define an ExecutorService but in cases where it is not explicitly needed Java will use a thread pool based on ForkJoinPool. (Read about [it and its work stealing algorithm](https://www.baeldung.com/java-fork-join))  
+Thread pool should be configured depending on the purposes. In general there are only three types:
+- CPU-bound  (i.e computation, image processing, file read)
+- Non-blocking IO (i.e web socket communication)
+- Blocking IO (i.e database query using JDBC)
 
-CPU-bound needs a fixed pool with number of threads equivalent to number of CPUs. 
+CPU-bound needs a fixed pool with number of threads equivalent to number of CPUs. We can also use ForkJoinPool here. 
 Non-blocking IO can use a single thread. 
-The problem  is non-blocking IO. The best way to handle it is replacing blocking library with a non-blocking one (Don't use JDBC but [this](https://github.com/jasync-sql/jasync-sql)).
+The problem  is non-blocking IO. The best way to handle it is replacing blocking library with a non-blocking one (in case of JDBC, [this](https://github.com/jasync-sql/jasync-sql) is the non-blocking alternatice).
