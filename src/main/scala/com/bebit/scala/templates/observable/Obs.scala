@@ -1,8 +1,10 @@
 package com.bebit.scala.templates.observable
 import monix.eval.Task
-import scala.concurrent.Await
+
+import scala.concurrent.{Await, Future}
 import monix.execution.Scheduler.Implicits.global
 import monix.reactive._
+
 import concurrent.duration.{Duration, _}
 import scala.language.postfixOps
 
