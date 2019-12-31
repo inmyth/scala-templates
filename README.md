@@ -162,7 +162,7 @@ Map can be expressed as literal with `->` to pair key and value
 val map = Map((1 ->"one"), (2 -> "two"), (3 -> "three")) 
 map(2) // "two"
 ```
-Map is also immutable so to add new element, use
+Map is also immutable so to add new element, we have to create a new Map
 ```scala
 val map = Map((1 ->"one"), (2 -> "two"), (3 -> "three")) 
 val map2 = map + (4 -> "four")
@@ -226,15 +226,78 @@ We can do the same thing to a normal class too if we override the `apply` method
 Scala also has `unapply` which is needed to extract data in the class. This is usually used in pattern-matching.
 
 ### String literal
+In Scala we can write a text without escaping characters. We do it with three double quotes `"""  """`
+```dtd
+val x = """ Single quotes ', double quotes "" are ok """
+```
+We can also handle lines easily with "|"
+```dtd
+val x ="""This is 
+       |a multiline
+       |String""".stripMargin
+```
+`stripMargin` basically strips any identation or left margin so the text will look clean. 
+We can also insert values in text easily by prepending String with `s`
+```
+val name = "Martin"
+val x = s"Hi my name is $name"
+```
+We can also insert expression
+```dtd
+val i = 3
+val x = s"${i - 1}"
+// 2
+```
 
+### Pattern matching
+Scala pattern matching is like Java switch-case but more powerful. 
+The standard syntax is simple:
+```dtd
+val x: Int = Random.nextInt(10)
+x match {
+  case 0 => "zero"
+  case 1 => "one"
+  case 2 => "two"
+  case _ => "other"
+}
+```
+We can also match against type. In Java we would use `if ... instanceof` for it.
+```dtd
+c match {
+  case s: String => 
+  case i: Int =>
+  case _ => // this is default
+}
+```
+But we can also do type matching and extract its values. 
+```dtd
+abstract class Notification
+case class Email(sender: String, title: String) extends Notification
+case class SMS(caller: String, message: String) extends Notification
 
+def showNotification(notification: Notification): String = 
+  notification match {
+    case Email(sender, title) => print(s"$sender $title")
+    case SMS(number, _) => print(number)
+  }
+```
+There are other useful pattern matching scenarios. For example matching a List against a sequence pattern
+```dtd
+case List(0, _, _) => // List(0,2,45) will match
+                      // but List(1,2,3) will not match
+
+case List(10, _*) => // List(10,2,3,45,4,56) or List(10) will match
+                     // but List(0,1) will not match 
+```
+
+Read more about use cases [here](https://alvinalexander.com/scala/how-to-use-pattern-matching-scala-match-case-expressions).
 
 ### Expression
 
 
 ### Null and Try
 
-### Pattern matching
+
 
 
 
