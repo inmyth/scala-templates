@@ -123,6 +123,27 @@ a += 4
 // a is ListBuffer(1,2,3,4)
 ```
 
+Other useful methods:
+- zip
+```scala
+val a = List(1,2,3)
+val b = List("a", "b", "c")
+val c = a.zip(b)
+// List((1,a), (2,b), (3,c))
+```
+Sometimes we don't need to write `.` so it can be as simple as
+```
+val c = a zip b
+```
+- reverse
+
+Reversing "abc" to "cba" is a popular interview question
+```scala
+"abc"
+.toList // "abc" to List("a", "b", "c")
+.reverse // List("a", "b", "c") to List("c", "b", "a")
+.mkString("") // List("c", "b", "a") to "cba"  
+```
 
 
 #### Tuple
@@ -136,12 +157,12 @@ println(c._2) // "aaa"
 ```
 
 #### Map
-Map can be expressed as literal
+Map can be expressed as literal with `->` to pair key and value
 ```scala
 val map = Map((1 ->"one"), (2 -> "two"), (3 -> "three")) 
 map(2) // "two"
 ```
-Again Map is immutable so to add new element, use
+Map is also immutable so to add new element, use
 ```scala
 val map = Map((1 ->"one"), (2 -> "two"), (3 -> "three")) 
 val map2 = map + (4 -> "four")
@@ -166,8 +187,47 @@ Map((1 ->"one"), (2 -> "two"), (3 -> "three")).toList
 ```
 
 ### Generics
+In Scala generics is expressed with `[]` (In Java it's `<>`).
+For example
+```scala
+val list : List[Int] = List(1,2,3)
+```
+### Object and Class
+In Scala object is singleton. Class is class and can be instantiated many times. 
+
+We can also have object and class with a same name in a same file. This structure is called companion object. 
+They can access each other members. How do we use it ?
+- An object is usually the entry point to a program (like Java's public static main)
+- Usually we define business logic in object so we can test it easily in unit-test without instantiating any class. 
+- Class ideally contains only data 
+
+### Case class
+Case class is Scala's bean.
+```scala
+case class User(name: String, id: Int)
+```
+In Java it would be equal to 
+```dtd
+class User {
+  public final String name;
+  public final Integer id;
+
+  public User(String name, Integer id){
+    this.name = name;
+    this.id = id;
+  }
+}
+```
+When initializing such class we don't need the keyword `new`
+```dtd
+val user = User("Martin", 13)
+```
+We can do the same thing to a normal class too if we override the `apply` method. 
+Scala also has `unapply` which is needed to extract data in the class. This is usually used in pattern-matching.
 
 ### String literal
+
+
 
 ### Expression
 
