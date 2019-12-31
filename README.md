@@ -77,6 +77,11 @@ def display(input: Int) = "You entered:" + input
 - Scala does not need `return` keyword. The final line in the method is the return value
 - If the method is one line, it doesn't need brackets
 
+In Java `void` is used for method that doesn't return anything. In Scala such method is called procedure and returns `Unit`.
+```
+def procedure(i : String) : Unit = print(i)
+```
+
 Functions in Scala are first-class and usually declared with `val`
 
 ```scala
@@ -279,9 +284,12 @@ case class SMS(caller: String, message: String) extends Notification
 def showNotification(notification: Notification): String = 
   notification match {
     case Email(sender, title) => print(s"$sender $title")
-    case SMS(number, _) => print(number)
-  }
+    case SMS(number, "hi") => print("hi") // match SMS with "hi" message
+    case SMS(number, _) => print(number) // match SMS with any message
+}
 ```
+
+
 There are other useful pattern matching scenarios. For example matching a List against a sequence pattern
 ```dtd
 case List(0, _, _) => // List(0,2,45) will match
