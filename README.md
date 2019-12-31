@@ -485,11 +485,9 @@ Observable evaluates the content one-by-one.
 
 #### Observable Basics
 
-Observable composition starts with a data source. The data source is usually stream or infinite list. 
-
-An Observable needs a Subscriber to run. 
-
-
+- Observable composition starts with a data source. The data source is usually stream or infinite list. 
+- An Observable needs a Subscriber to run. Monix provides built-in Subscribers with operators whose name end in "L" (i.e `foreachL`, `completedL`, `foldLeftL`)
+- Observable supports backpressure to process several elements in batch. In the default setting each element is processed one-by-one before moving to the next. 
 
 ### Multi-threading and thread pools
 Read this [first](https://gist.github.com/djspiewak/46b543800958cf61af6efa8e072bfd5c). 
