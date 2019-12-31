@@ -41,7 +41,7 @@ object MySQLTemplate extends App {
   f.runToFuture.map(println) recover { case e => println(e)}
 
   Thread.sleep(2000)
-  
+
 }
 
 

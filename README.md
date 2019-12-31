@@ -355,7 +355,7 @@ Like Option, we can provide Try with a default value with `getOrElse`
 Try ( 1 / 0 ) getOrElse(999)
 // 999
 ```
-We can use `recover` which returns a Try. Usually we do it to defer the execution. 
+We can also use `recover` which returns a Try. Usually we do it to defer the execution. 
 ```dtd
 Try ( 1 / 0 ) recover {case exception => 999}
 // Success(999)
@@ -387,20 +387,20 @@ In general concurrency task can be divided into four regions:
 
 Scala Future is simple
 ```$xslt
-   Future{ ... }
+Future{ ... }
 ```
 To resolve it we use higher-order functions like map or foreach
 ```$xslt
-   Future{ 1 }. map(p => ...) // 1 will arrive in p
+Future{ 1 }. map(p => ...) // 1 will arrive in p
 ```
 
 Or we can resolve it like this
 ```$xslt
 
-   Future{ 1/0 }.onComplete {
-      case Success(p) => 
-      case Failure(e) => 
-    }
+Future{ 1/0 }.onComplete {
+  case Success(p) => 
+  case Failure(e) => 
+}
 
 ``` 
 And we can compose it with for-comprehension
@@ -433,20 +433,20 @@ Long answer: It breaks [referential transparency](https://nrinaudo.github.io/sca
 Referential transparency means that any expression can be replaced by its value.
 Consider this code:
 ```$xslt
-  val f = Future {
-    println("Hello")
-    67
-  }
+val f = Future {
+  println("Hello")
+  67
+}
 
-  val composition = for {
-    f1 <- f
-    f2 <- f
-  } yield (f1, f2)
+val composition = for {
+  f1 <- f
+  f2 <- f
+} yield (f1, f2)
 
-  composition.foreach(println)
+composition.foreach(println)
 /*
-    Hello
-    (67,67)
+Hello
+(67,67)
 */
 ```
 We have a Future that contains a print "Hello" and return value 67. We assign it to `f`. Then we use `f` twice in a future comprehension. 
@@ -465,17 +465,17 @@ Observable evaluates an element in a collection to the end of the process before
 
 Future/Task
 ```$xslt
-   Future{ List(1,2,3) }
-   .foreach(println) 
+Future{ List(1,2,3) }
+.foreach(println) 
 /*
-  List(1,2,3)
+List(1,2,3)
 */
 ```
 
 Observable
 ```$xslt
-   Observable{ List(1,2,3) }
-   .foreachL(println)
+Observable{ List(1,2,3) }
+.foreachL(println)
 /*
 1
 2
