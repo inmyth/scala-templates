@@ -63,7 +63,7 @@ In Scala we create a new object when we modify an object.
 (*) Actually Java is starting to understand immutability too because `List.of(...)` in Java 9 produces immutable list. 
  
 ### Methods and Functions
-
+#### Methods
 Methods are defined with `def`
 ```scala
 def display(input: Int): String = {
@@ -82,6 +82,19 @@ In Java `void` is used for method that doesn't return anything. In Scala such me
 def procedure(i : String) : Unit = print(i)
 ```
 
+Also Scala supports default value
+```scala
+def display(input: Int = 0) = "You entered:" + input
+display() // "You entered: 0" 
+```
+
+For methods that don't have parameter we can invoke it without parenthesis
+```scala
+def display = println("This is a text")
+display
+```
+
+#### Functions
 Functions in Scala are first-class and usually declared with `val`
 
 ```scala
@@ -301,18 +314,53 @@ case List(10, _*) => // List(10,2,3,45,4,56) or List(10) will match
 
 Read more about use cases [here](https://alvinalexander.com/scala/how-to-use-pattern-matching-scala-match-case-expressions).
 
-### Expression
+### Null handling 
+In Scala we always avoid writing or reading null. We use Option for any value that *may* be null (i.e JSON parsing or database query).
+ 
+ Scala Option has two subclasses: None and Some. 
+The rule is:
+- `Option(null) is None`
+- `Option(100) is Some(100)` 
 
+Scala Option is similar to Java's Optional. They share the same methods:
+```dtd
+Option( ... ).getOrElse( defaultValue )
+Option.isDefined
+Option.isEmpty
+```
+We can also use process it functionally with `map` or `foreach`
+```dtd
+Option( 1 ).map(p => p * 10)  // map will run
+Option( null ).map(p => p * 10) // map will not run
+```
+Finally Option also has `orNull` which will revert None back to null. This is used for compatibility purpose for Java libraries that take in null. 
 
-### Null and Try
+### Try
+In Scala Try wraps a computation that may return an exception. Declaring it is very simple
+```dtd
+Try( ... )
+``` 
+We handle the result with Success and Failure
+```dtd
+val t =  Try ( 1 / 0 )
+t match {
+  case Success(value) =>  
+  case Failure(exception) => 
+}
+```
+In the example above, the result will appear in `Failure(exception)` because of division by zero.
 
-
-
-
-
-
-
-
+Like Option, we can provide Try with a default value with `getOrElse`
+```dtd
+Try ( 1 / 0 ) getOrElse(999)
+// 999
+```
+We can use `recover` which returns a Try. Usually we do it to defer the execution. 
+```dtd
+Try ( 1 / 0 ) recover {case exception => 999}
+// Success(999)
+```
+The properties of Try are shared with `Future`, to be discussed later.
 
 ## Concurrency
 In general concurrency task can be divided into four regions:
@@ -337,7 +385,6 @@ In general concurrency task can be divided into four regions:
      
 ### Scala Future
 
-
 Scala Future is simple
 ```$xslt
    Future{ ... }
@@ -358,13 +405,24 @@ Or we can resolve it like this
 ``` 
 And we can compose it with for-comprehension
 ```$xslt
-    val composition = for {
-      f1 <- Future{ 3 }
-      f2 <- Future{ f1 + 50 }
-      f3 <- Future { f2 + f1 } // any Future can get the results from previous Futures, in this case f1 and f2
-    } yield (f2, f3) // yield returns the value
-    composition.map(p => ...) // what is p ?
+val composition = for {
+   f1 <- Future{ 3 }
+   f2 <- Future{ f1 + 50 }
+   f3 <- Future { f2 + f1 } // any Future can get the results from previous Futures, in this case f1 and f2
+yield (f2, f3) // yield returns the value
+composition.map(p => ...) // what is p ?
 ```
+Remember that Future shares the same property with `Try` so we can provide a default value in case any process throws an exception. 
+One example is a web server. Web server needs to read a request parameter and return a page. If the parameter is invalid we can return a default page, usually a front page. 
+```$xslt
+val pageNumber = "sdfgdf"
+val composition = for {
+   fPageNumber <- Future { pageNumber.toInt } recover {case e => 0}
+   fPageObject <- Future { getFromDb( fPageNumber )}
+} yield fPageObject
+composition.map(p => request.send(p)) 
+```
+
 
 ### The problem with Scala's default Future
 

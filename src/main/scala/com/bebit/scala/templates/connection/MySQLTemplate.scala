@@ -12,6 +12,7 @@ import monix.eval.Task
 import scala.compat.java8.FutureConverters
 import scala.concurrent.{Await, Future}
 import scala.concurrent.duration.Duration
+import scala.util.{Failure, Success, Try}
 
 
 object MySQLTemplate extends App {
@@ -40,8 +41,7 @@ object MySQLTemplate extends App {
   f.runToFuture.map(println) recover { case e => println(e)}
 
   Thread.sleep(2000)
-
-
+  
 }
 
 
