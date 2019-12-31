@@ -74,7 +74,7 @@ or
 ```scala
 def display(input: Int) = "You entered:" + input 
 ```
-- Scala does not need `return`. The final line in the method is the return value
+- Scala does not need `return` keyword. The final line in the method is the return value
 - If the method is one line, it doesn't need brackets
 
 Functions in Scala are first-class and usually declared with `val`
