@@ -229,8 +229,9 @@ Scala also has `unapply` which is needed to extract data in the class. This is u
 In Scala we can write a text without escaping characters. We do it with three double quotes `"""  """`
 ```dtd
 val x = """ Single quotes ', double quotes "" are ok """
+// Single quotes ', double quotes "" are ok
 ```
-We can also handle lines easily with "|"
+We can also handle lines easily with `|`
 ```dtd
 val x ="""This is 
        |a multiline
