@@ -25,8 +25,163 @@ Cheatsheet:
 - Functor : anything with map
 - Monad : functor with flatmap
 
+## From Java to Scala
 
+### Variables
+- `val` : immutable, similar to Java's `final`
+- `var` : mutable
+
+val cannot be reassigned
+```dtd
+val x = "aaa"
+x = "bbb" // error
+```
+
+Scala also has type inference that automatically detects object type
+```dtd
+val x : String = "aaa"
+val x = "aaa" 
+```
+
+In Scala we always prefer immutability. We don't modify the reference **and** the object. Many common object types like List, Map, Set are immutable. Consider this example:
+
+Java
+```
+List<Integer> source = new ArrayList<>(Arrays.asList(1, 2, 3));
+for(int i = 0; i < source.size(); i++){
+    source.set(i, source.get(i) * 10);
+}
+// source is now (10,20,30)
+```
+Scala
+```scala
+val source = List(1,2,3)
+val result = source.map(p => p * 10)
+// source is still (1,2,3), result is (10,20,30)
+```
+In Scala we create a new object when we modify an object. 
+(*) Actually Java is starting to understand immutability too because `List.of(...)` in Java 9 produces immutable list. 
  
+### Methods and Functions
+
+Methods are defined with `def`
+```scala
+def display(input: Int): String = {
+   "You entered:" + input
+}
+```
+or
+```scala
+def display(input: Int) = "You entered:" + input 
+```
+- Scala does not need `return`. The final line in the method is the return value
+- If the method is one line, it doesn't need brackets
+
+Functions in Scala are first-class and usually declared with `val`
+
+```scala
+val display = (input: Int) =>  "You entered:" + input 
+```
+
+If you are not sure, you can always use `def`. But it is important to know that `val` is lazily evaluated (executed once on the line is declared and the result is stored for future use).
+[Advanced use](https://stackoverflow.com/questions/4839537/functions-vs-methods-in-scala). 
+
+### Collections
+
+
+Declaring a collection is simple
+```scala
+List(1,2,3)
+```
+Unlike Java, Scala doesn't need `.stream` or `.collect(Collectors.toList());`
+```scala
+val result = List(1,2,3).map(p => p * 10)
+// result is List(10,20,30)
+```
+In Scala `_` is wildcard 
+```
+val result = List(1,2,3).map(_ * 10) // same as above
+val result = List(1,2,3).filter(_ != 2) // filter out 2
+val result = List(1,2,3).reduce(_ + _) // equals to List(1,2,3).reduce((a,b) => a+b) 
+```
+
+Remember that default collection types are immutable. That means you cannot add or remove elements from List. 
+If you want to do it you can create a new List  ([Complete Operations](http://allaboutscala.com/tutorials/chapter-6-beginner-tutorial-using-scala-immutable-collection/scala-tutorial-learn-use-immutable-list/))
+
+```scala
+val a = List(1,2,3)
+val b = a :+ 4
+// b is List(1,2,3,4)
+```
+or you can use ListBuffer
+```scala
+import scala.collection.mutable.ListBuffer
+val a = ListBuffer(1,2,3)
+a.append(4)
+// or
+a += 4
+// a is ListBuffer(1,2,3,4)
+```
+
+
+
+#### Tuple
+Scala supports literal tuples. To access the members, we use `._index`
+```scala
+val a = 10
+val b = "aaa"
+val c = (a , b)
+println(c._1) // 10
+println(c._2) // "aaa"
+```
+
+#### Map
+Map can be expressed as literal
+```scala
+val map = Map((1 ->"one"), (2 -> "two"), (3 -> "three")) 
+map(2) // "two"
+```
+Again Map is immutable so to add new element, use
+```scala
+val map = Map((1 ->"one"), (2 -> "two"), (3 -> "three")) 
+val map2 = map + (4 -> "four")
+```
+Also in Scala it's easy to convert List of tuples to Map
+
+```scala
+List( (1, "one"), (2, "two"), (3, "three") ).toMap
+// now it's Map((1 ->"one"), (2 -> "two"), (3 -> "three")) 
+```
+We can also apply other function before conversion to Map
+```scala
+List( (1, "one"), (2, "two"), (3, "three") )
+.map(p => (p._1 * 10, p._2))
+.toMap
+// now it's Map((10 ->"one"), (20 -> "two"), (30 -> "three"))
+```
+To change Map to List of tuples we simply use `toList`
+```scala
+Map((1 ->"one"), (2 -> "two"), (3 -> "three")).toList
+// now it's List( (1, "one"), (2, "two"), (3, "three") )
+```
+
+### Generics
+
+### String literal
+
+### Expression
+
+
+### Null and Try
+
+### Pattern matching
+
+
+
+
+
+
+
 ## Concurrency
 In general concurrency task can be divided into four regions:
 
