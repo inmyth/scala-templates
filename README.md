@@ -419,7 +419,7 @@ val composition = for {
 } yield fPageObject
 composition.map(p => request.send(p)) 
 ```
-
+The composition above will try to parse a page number. If it fails it will assign zero or landing page to be retrieved from database.
 
 ### The problem with Scala's default Future
 
