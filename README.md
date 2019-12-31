@@ -280,7 +280,7 @@ x match {
   case _ => "other"
 }
 ```
-We can also match against type. In Java we would use `if ... instanceof` for it.
+We can also match a value against type (similar to Java's `instanceof`).
 ```dtd
 c match {
   case s: String => 
@@ -301,8 +301,6 @@ def showNotification(notification: Notification): String =
     case SMS(number, _) => print(number) // match SMS with any message
 }
 ```
-
-
 There are other useful pattern matching scenarios. For example matching a List against a sequence pattern
 ```dtd
 case List(0, _, _) => // List(0,2,45) will match
@@ -312,7 +310,7 @@ case List(10, _*) => // List(10,2,3,45,4,56) or List(10) will match
                      // but List(0,1) will not match 
 ```
 
-Read more about use cases [here](https://alvinalexander.com/scala/how-to-use-pattern-matching-scala-match-case-expressions).
+Read more about pattern matching's use cases [here](https://alvinalexander.com/scala/how-to-use-pattern-matching-scala-match-case-expressions).
 
 ### Null handling 
 In Scala we always avoid writing or reading null. We use Option for any value that *may* be null (i.e JSON parsing or database query).
@@ -322,18 +320,17 @@ The rule is:
 - `Option(null) is None`
 - `Option(100) is Some(100)` 
 
-Scala Option is similar to Java's Optional. They share the same methods:
+Scala Option is similar to Java's Optional. We can assign a default value or check if it's defined.
 ```dtd
 Option( ... ).getOrElse( defaultValue )
 Option.isDefined
 Option.isEmpty
 ```
-We can also use process it functionally with `map` or `foreach`
+We can also get the value functionally with `map` or `foreach`
 ```dtd
 Option( 1 ).map(p => p * 10)  // map will run
 Option( null ).map(p => p * 10) // map will not run
 ```
-Finally Option also has `orNull` which will revert None back to null. This is used for compatibility purpose for Java libraries that take in null. 
 
 ### Try
 In Scala Try wraps a computation that may return an exception. Declaring it is very simple
