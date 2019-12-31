@@ -78,7 +78,7 @@ def display(input: Int) = "You entered:" + input
 - If the method is one line, it doesn't need brackets
 
 In Java `void` is used for method that doesn't return anything. In Scala such method is called procedure and returns `Unit`.
-```
+```scala
 def procedure(i : String) : Unit = print(i)
 ```
 
@@ -212,7 +212,7 @@ Case class is Scala's bean.
 case class User(name: String, id: Int)
 ```
 In Java it would be equal to 
-```dtd
+```java
 class User {
   public final String name;
   public final Integer id;
@@ -232,12 +232,12 @@ Scala also has `unapply` which is needed to extract data in the class. This is u
 
 ### String literal
 In Scala we can write a text without escaping characters. We do it with three double quotes `"""  """`
-```dtd
+```scala
 val x = """ Single quotes ', double quotes "" are ok """
 // Single quotes ', double quotes "" are ok
 ```
 We can also handle lines easily with `|`
-```dtd
+```scala
 val x ="""This is 
        |a multiline
        |String""".stripMargin
@@ -249,7 +249,7 @@ val name = "Martin"
 val x = s"Hi my name is $name"
 ```
 We can also insert expression
-```dtd
+```scala
 val i = 3
 val x = s"${i - 1}"
 // 2
