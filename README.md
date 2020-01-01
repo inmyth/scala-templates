@@ -485,9 +485,9 @@ Future{ 1/0 }.onComplete {
 And we can compose it with for-comprehension
 ```$xslt
 val composition = for {
-   f1 <- Future{ 3 }
-   f2 <- Future{ f1 + 50 }
-   f3 <- Future { f2 + f1 } // any Future can get the results from previous Futures, in this case f1 and f2
+  f1 <- Future{ 3 }
+  f2 <- Future{ f1 + 50 }
+  f3 <- Future { f2 + f1 } // any Future can get the results from previous Futures, in this case f1 and f2
 yield (f2, f3) // yield returns the value
 composition.map(p => ...) // what is p ?
 ```
@@ -496,8 +496,8 @@ One example is a web server. Web server needs to read a request parameter and re
 ```$xslt
 val pageNumber = "sdfgdf"
 val composition = for {
-   fPageNumber <- Future { pageNumber.toInt } recover {case e => 0}
-   fPageObject <- Future { getFromDb( fPageNumber )}
+  fPageNumber <- Future { pageNumber.toInt } recover {case e => 0}
+  fPageObject <- Future { getFromDb( fPageNumber )}
 } yield fPageObject
 composition.map(p => request.send(p)) 
 ```
@@ -542,6 +542,11 @@ Observable evaluates an element in a collection to the end of the process before
 
 ### Difference between Future/Task and Observable
 
+Future/Task evaluates the content as a single value. 
+Observable evaluates the content one-by-one. 
+
+Let's say we want to pass List(1,2,3) into two tasks where each time we apply multiplication by ten. This is how they work:
+ 
 Future/Task
 
 ![future.gif](./future.gif)
@@ -550,12 +555,24 @@ Observable
 
 ![observable.gif](./observable.gif)
 
+The codes:
+```
+// Task
+val comp = for {
+  f1 <- Task( List(1,2,3))
+  f2 <- Task( f1.map(_ * 10))
+  f3 <- Task( f2.map(_ * 10))
+} yield f3
+comp foreach println
 
-Future/Task evaluates the content as a single value. 
-Observable evaluates the content one-by-one. 
+// Observable
+Observable.fromIterable(1 to 3)
+  .mapEval(p => Task(p * 10))
+  .mapEval(p => Task(p * 10))
+  .foreachL(println)
+```
 
 #### Observable Basics
-
 - Observable composition starts with a data source. The data source is usually stream or infinite list. 
 - An Observable needs a Subscriber to run. Monix provides built-in Subscribers with operators whose name end in "L" (i.e `foreachL`, `completedL`, `foldLeftL`)
 - Observable supports backpressure to process several elements in batch. In the default setting each element is processed one-by-one before moving to the next. 
