@@ -211,7 +211,8 @@ For example
 val list : List[Int] = List(1,2,3)
 ```
 ### Object and Class
-In Scala object is singleton. An object is usually the entry point to a program (like Java's public static main).
+In Scala object is singleton. An object is usually the entry point to a program (like Java's main method).
+To call any method in an object we don't need to instantiate the object. In Java this is similar to `public static` modifier. 
 
 Example:
 ```scala
@@ -222,7 +223,6 @@ object SingletonObject {
 SingletonObject.greet
 
 ```
-To call any method in an object we don't need to instantiate the object. In Java this is similar to `public static` modifier. 
 
 Class is like a Java class and can be instantiated many times. 
 
@@ -244,7 +244,6 @@ In Scala class, the entire body is a constructor. In the class above, println wi
 
 ### Companion object
 Companion object is an object that is put next to class with a same name in a same file.
-How do we use it ?
 - Object and class in companion object structure can access each other's fields. 
 - Class ideally contains data.
 - Object ideally contains business logic.  
