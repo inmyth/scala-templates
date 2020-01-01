@@ -540,28 +540,17 @@ Monix Observable is functional implementation of ReactiveX. In Java the library 
 
 Observable evaluates an element in a collection to the end of the process before moving to the next element. 
 
-#### Difference between Future/Task and Observable
+### Difference between Future/Task and Observable
 
 Future/Task
-```$xslt
-Future{ List(1,2,3) }
-.foreach(println) 
-/*
-List(1,2,3)
-*/
-```
+
+![future.gif](./future.gif)
 
 Observable
-```$xslt
-Observable{ List(1,2,3) }
-.foreachL(println)
-/*
-1
-2
-3
-*/
 
-```
+![observable.gif](./observable.gif)
+
+
 Future/Task evaluates the content as a single value. 
 Observable evaluates the content one-by-one. 
 
