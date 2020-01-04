@@ -594,7 +594,7 @@ Non-blocking IO can use a single thread.
 The problem  is non-blocking IO. The best way to handle it is replacing blocking library with a non-blocking one (in case of JDBC, [this](https://github.com/jasync-sql/jasync-sql) is the non-blocking alternative).
 
 ### Advanced topics
-Here we discuss Scala features we don't use much but it is useful to know.
+Here we discuss Scala features we don't use much but are useful to know.
 
 #### Variance
 Variance means that a generic class can be made to support its type's hierarchy. We probably will never use it but it's important to know what the syntax looks like.
