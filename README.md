@@ -628,7 +628,7 @@ We can introduce an upper bound with `<:` to restrict the highest super-type a c
 class PetContainer[P <: Pet](p: P) {
   def pet: P = p
 }
-new PetContainer[Dog](new Dog()) // works 
+new PetContainer[Dog](new Dog()) // ok 
 new PetContainer[Lion](new Lion()) // error
 ```
 
