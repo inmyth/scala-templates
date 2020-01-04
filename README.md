@@ -210,6 +210,7 @@ For example
 ```scala
 val list : List[Int] = List(1,2,3)
 ```
+
 ### Object and Class
 In Scala object is singleton. An object is usually the entry point to a program (like Java's main method).
 To call any method in an object we don't need to instantiate the object. In Java this is similar to `public static` modifier. 
@@ -441,6 +442,7 @@ Try ( 1 / 0 ) recover {case exception => 999}
 ```
 The properties of Try are shared with `Future`, to be discussed later.
 
+
 ## Concurrency
 In general concurrency task can be divided into four regions:
 
@@ -590,3 +592,100 @@ Thread pool should be configured depending on the purposes. In general there are
 CPU-bound needs a fixed pool with number of threads equivalent to number of CPUs. We can also use ForkJoinPool here. 
 Non-blocking IO can use a single thread. 
 The problem  is non-blocking IO. The best way to handle it is replacing blocking library with a non-blocking one (in case of JDBC, [this](https://github.com/jasync-sql/jasync-sql) is the non-blocking alternative).
+
+### Advanced topics
+Here we discuss Scala features we don't use much but it is useful to know.
+
+#### Variance
+Variance means that a generic class can be made to support its type's hierarchy. We probably will never use it but it's important to know what the syntax looks like.
+ 
+- Invariant (default)
+```
+class MyClass[A]
+```
+
+- Covariant
+```
+class MyClass[+A]
+```
+If A is a subtype of B then MyClass[A] is a subtype of MyClass[B]. 
+
+- Contravariant
+```
+class MyClass[-A]
+```
+Here if A is a subtype of B, MyClass[B] is a subtype of MyClass[A].
+
+We can further add upper-bound and lower-bound to restrict how high or how low in a hierarchy a generic class can support. 
+For example, an Animal type may have several sub-classes like this: 
+```
+Animal - Pet - Dog
+Animal - Pet - Cat
+Animal - Lion
+```
+We can introduce an upper bound with `<:` to restrict the highest super-type a class can support. Example:
+```
+class PetContainer[P <: Pet](p: P) {
+  def pet: P = p
+}
+new PetContainer[Dog](new Dog()) // works 
+new PetContainer[Lion](new Lion()) // error
+```
+
+Inversely there's also lower-bound with `>:`. 
+
+
+#### Implicits
+
+In Scala we use implicit to avoid code redundancy. We probably won't use implicit too much in our code but it's useful to know what it is. 
+
+Consider this code:
+
+```dtd
+def sendEmail(subject: String, address: String) = ...
+def sendSMS(subject: String, phone: String) = ...
+def sendLINE(subject: String, lineId: String)= ...
+```
+To call those methods we'd have to fill the parameters
+```dtd
+sendEmail("Hi", "aaa@bbb.com")
+sendSMS("Hi", "12345")
+sendLINE("Hi", "lineABC")
+```
+In the code above, `subject` is redundant. We can extract the redundant parameter with implicit.  
+```dtd
+def sendEmail(address: String)(implicit subject: String) = ...
+def sendSMS(phone: String)(implicit subject: String)  = ...
+def sendLINE(lineId: String)(implicit subject: String) = ...
+```
+```dtd
+implicit val hi = "Hi"
+
+sendEmail("aaa@bbb.com")
+sendSMS("12345")
+sendLINE("lineABC")
+```
+
+There is another kind of implicit called implicit conversion. It's basically a method that implicitly converts a type to another type to satisfy the method's parameter. 
+We don't use implicits much because it makes the code look like magic. But there are use cases where we have to use it. For examples:
+- Concurrency
+
+All concurrent process requires an executor or a thread pool. The default thread pool is usually imported like this:
+```dtd
+// for Future
+import scala.concurrent.ExecutionContext.Implicits.global
+// for Task
+import monix.execution.Scheduler.Implicits.global
+```
+- Duration
+
+Duration is most often used to define waiting time. An example is Await which waits for a concurrent process.
+```dtd
+Await.ready(aFuture, Duration.apply(2, TimeUnit.SECONDS)))
+```
+With implicit conversion we can make it prettier. 
+```dtd
+import concurrent.duration._
+
+Await.ready(aFuture, 2 seconds)
+```
