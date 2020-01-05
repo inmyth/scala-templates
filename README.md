@@ -204,6 +204,53 @@ Map((1 ->"one"), (2 -> "two"), (3 -> "three")).toList
 // now it's List( (1, "one"), (2, "two"), (3, "three") )
 ```
 
+#### Java 8 Streams vs Scala
+Java Streams evaluates elements in a collection one-by-one through all the steps. In this regard it behaves like Scala Observable.  
+```dtd
+List<Integer> myList = Arrays.asList(1,2,3);
+myList.stream()
+  .map(p -> {
+    Integer x = p * 10;
+    System.out.println(x);
+    return x;
+  })
+  .forEach(p -> {
+    Integer x = p * 10;
+    System.out.println(x);
+  });
+/*
+10
+100
+20
+200
+30
+300
+*/
+```
+Scala evaluates the entire collection before moving to the next step.
+```dtd
+List(1,2,3)
+  .map(p => {
+    val x = p * 10
+    println(x)
+    x
+})
+  .map(p => {
+    val x = p * 10
+    println(x)
+    x
+})
+/*
+10
+20
+30
+100
+200
+300
+*/
+```
+
+
 ### Generics
 In Scala generics is expressed with `[]` (In Java it's `<>`).
 For example
