@@ -8,6 +8,9 @@ Use:
 import CassandraHelper._
 import scala.concurrent.ExecutionContext.Implicits.global
 
-val future = execute(cql"select ....", args)
+val future = execute(cql"SELECT * FROM my_table WHERE my_key = ?", 44)
 ```
+
+
+
 

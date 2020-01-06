@@ -24,7 +24,7 @@ object CassandraDatastaxBasic extends App {
     })
     .recover{case e => println(e)}
 
-  Await.ready(compose, Duration.Inf)
+//  Await.ready(compose, Duration.Inf)
 }
 
 
