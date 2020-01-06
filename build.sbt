@@ -12,6 +12,11 @@ libraryDependencies += "org.scala-lang.modules" %% "scala-java8-compat" % "0.9.0
 
 // MySql/Postgres
 libraryDependencies += "com.github.jasync-sql" % "jasync-mysql" % "1.0.12"
+// Cassandra Phantom
+//libraryDependencies += "com.outworkers" %% "phantom-dsl" % "2.42.0"
+// https://mvnrepository.com/artifact/com.datastax.oss/java-driver-core
+libraryDependencies += "com.datastax.oss" % "java-driver-core" % "4.3.1"
+
 
 //Test
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.0-M2" % Test
