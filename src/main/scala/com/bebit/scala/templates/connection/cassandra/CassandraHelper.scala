@@ -17,7 +17,13 @@ object CassandraHelper {
 
   def execute(statement: Task[PreparedStatement], params: Any*)( implicit session: CqlSession): Task[AsyncResultSet] =
     statement
-      .map(p => if(params.nonEmpty) p.bind(params.map(_.asInstanceOf[Object]) ) else p.bind())
+      .map(p => {
+        if(params.nonEmpty) {
+          val x = params.map(_.asInstanceOf[Object])
+          p.bind(x: _*)
+        }
+        else p.bind()
+      })
       .flatMap(p => Task.fromFuture(scala.compat.java8.FutureConverters.toScala(session.executeAsync(p)))
     )
 }
