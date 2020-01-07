@@ -26,7 +26,7 @@ import scala.reflect.io.Path
  */
 object ObsValidator extends App{
 
-    val fileName = "/1575021601-cli_t-30_template.csv"
+    val fileName = "/csv-samples/1575021601-cli_t-30_template.csv"
     val reader = CSVReader.open(getClass.getResource(fileName).getFile)
 
     val csvStream = Observable.fromIterable(reader.toStream)

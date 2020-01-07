@@ -83,7 +83,7 @@ object ObsDeleteGram extends App{
 
   case class DeleteKey(userId: String, timeUsec: Long, visitId: String, seqNo: Int)
   def toDeleteKey (in : List[String]) : DeleteKey = DeleteKey(in.head, in(1).toLong, in(2), in.last.toInt)
-  val reader = CSVReader.open(getClass.getResource("/sample.csv").getFile)
+  val reader = CSVReader.open(getClass.getResource("/csv-samples/sample.csv").getFile)
   val csvStream = Observable.fromIterable(reader.toStream)
     .dump("start")
     .asyncBoundary(OverflowStrategy.BackPressure(2))

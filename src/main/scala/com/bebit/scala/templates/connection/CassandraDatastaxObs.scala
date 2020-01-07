@@ -2,28 +2,35 @@ package com.bebit.scala.templates.connection
 
 import java.math.BigInteger
 
-import com.bebit.scala.templates.connection.CassandraDatastaxBasic.session
-import com.bebit.scala.templates.connection.cassandra.CassandraHelper.execute
-import com.datastax.oss.driver.api.core.{CqlIdentifier, CqlSession}
-import com.datastax.oss.driver.api.core.config.{DefaultDriverOption, DriverConfigLoader}
+import com.datastax.oss.driver.api.core.CqlSession
+import com.datastax.oss.driver.api.core.config.DriverConfigLoader
+import com.github.tototoshi.csv.CSVReader
+import monix.eval.Task
+import monix.reactive.Observable
 
-import scala.jdk.CollectionConverters._
+import scala.concurrent.Await
+import scala.concurrent.duration.Duration
+
 /*
+  This setup works on local with the keyspace:
   CREATE KEYSPACE IF NOT EXISTS my_keyspace
   WITH replication = {
     'class':'SimpleStrategy',
     'replication_factor' : 3
   };
+
+  And in config
+  request.consistency = ONE
+
  */
 object CassandraDatastaxObs extends App {
   import cassandra.CassandraHelper._
-
   import monix.execution.Scheduler.Implicits.global
 
+  val fileName = "/csv-samples/sample.csv"
   implicit val session = CqlSession.builder()
     .withConfigLoader(DriverConfigLoader.fromClasspath("cassandra-samples/application.conf"))
     .build();
-
   sys.addShutdownHook(session.close())
 
   val compose = for {
@@ -31,16 +38,31 @@ object CassandraDatastaxObs extends App {
     _ <- execute(
       cql"""
         CREATE TABLE emp(
-         id int PRIMARY KEY,
-         name TEXT,
-         phone VARINT
+         id VARINT PRIMARY KEY,
+         field1 TEXT,
+         field2 VARINT,
+         field4 VARINT
         );
          """)
-    _ <- execute(cql"INSERT INTO emp(id, name, phone) VALUES(?, ?, ?);", 1, "martin", BigInteger.valueOf(3453453453L))
-    t <- execute(cql"SELECT * FROM emp WHERE id = ?;", 1)
-  } yield t
+  } yield ()
+  val x = compose.runToFuture
+  Await.ready(x, Duration.Inf)
 
-  compose.runToFuture
-    .map(p => println (p.one().getString(CqlIdentifier.fromCql("name"))))
-    .recover{case e => println(e)}
+  def chainInsertThenSelect(csvrow: List[String]) = for {
+    _ <- execute(cql"INSERT INTO emp(id, field1, field2, field4) VALUES(?, ?, ?, ?);", new BigInteger(csvrow(2)), csvrow.head, new BigInteger(csvrow(1)), new BigInteger(csvrow(3)))
+    rs <- execute(cql"SELECT field1 FROM emp WHERE id = ?", new BigInteger(csvrow(2)))
+    id <- Task (rs.one().getString(0))
+  } yield id
+
+  val reader = CSVReader.open(getClass.getResource(fileName).getFile)
+  val stream = Observable.fromIterable(reader.toStream)
+    .dump("start")
+    .mapEval(p => (if(p.head == "a") Task.raiseError(new Exception("this is a header")) else Task.now(p)).attempt)
+    .collect{ case Right(v) => v}
+    .mapEval(chainInsertThenSelect)
+    .foreachL(println)
+    .runToFuture
+
+  Await.ready(stream, Duration.Inf)
+  
 }
