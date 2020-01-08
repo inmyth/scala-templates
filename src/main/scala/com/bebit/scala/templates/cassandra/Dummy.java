@@ -72,4 +72,19 @@ public class Dummy {
     public void setComment(String comment) {
         this.comment = comment;
     }
+
+    @Override
+    public String toString() {
+        StringBuffer sb = new StringBuffer("Dummy{serviceId=");
+        sb.append(serviceId);
+        sb.append(", dataId=");
+        sb.append(dataId);
+        sb.append(", acquisitionDay=");
+        sb.append(acquisitionDay);
+        sb.append(", price=");
+        sb.append(price);
+        sb.append(", comment=");
+        sb.append(comment);
+        return sb.toString();
+    }
 }

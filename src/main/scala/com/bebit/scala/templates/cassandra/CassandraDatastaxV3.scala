@@ -9,7 +9,7 @@ import com.datastax.driver.mapping.MappingManager
 import com.github.tototoshi.csv.CSVReader
 import com.typesafe.config.ConfigFactory
 import monix.eval.Task
-import monix.reactive.Observable
+import monix.reactive.{Observable, OverflowStrategy}
 
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
@@ -28,11 +28,7 @@ object CassandraDatastaxV3 extends App{
   implicit val session = cluster.connect(keyspace)
   val manager = new MappingManager(session)
 
-//  manager.mapper(classOf[Dummy]).get()
-
   sys.addShutdownHook(session.close())
-  val queries = manager.createAccessor(classOf[QueriesV3])
-
 
   val compose = for {
     _ <- execute(cql"DROP TABLE dummy")
@@ -52,30 +48,30 @@ object CassandraDatastaxV3 extends App{
   val x = compose.runToFuture
   Await.ready(x, Duration.Inf)
 
+  def csvRowToDummy(csvRow: List[String]) = new Dummy(csvRow.head, csvRow(1), csvRow(2), csvRow(3), csvRow(4))
 
-//
-////  val manager = new MappingManager(session)
-////  val mapper = manager.mapper(classOf[Nothing])
-//
-//  def chainInsertThenSelect(csvrow: List[String]) = for {
-//
-//
-//
-//    _ <- execute(cql"INSERT INTO emp(id, field1, field2, field4) VALUES(?, ?, ?, ?);", new BigInteger(csvrow(2)), csvrow.head, new BigInteger(csvrow(1)), new BigInteger(csvrow(3)))
-//    rs <- execute(cql"SELECT field1 FROM emp WHERE id = ?", new BigInteger(csvrow(2)))
-//    id <- Task (rs.one().getString(0))
-//  } yield id
-//
-//  val reader = CSVReader.open(getClass.getResource(fileName).getFile)
-//  val stream = Observable.fromIterable(reader.toStream)
-//    .dump("start")
-//    .mapEval(p => (if(p.head == "a") Task.raiseError(new Exception("this is a header")) else Task.now(p)).attempt)
-//    .collect{ case Right(v) => v}
-//    .mapEval(chainInsertThenSelect)
-//    .foreachL(println)
-//    .runToFuture
-//
-//  Await.ready(stream, Duration.Inf)
+  def chainInsertThenSelect(csvrow: List[String]) = for {
+    acs <- Task{ manager.createAccessor(classOf[QueriesV3]) }
+    mgr <- Task{ manager.mapper(classOf[Dummy]) }
+    _ <- mgr.saveAsync(csvRowToDummy(csvrow))
+    dummy <- mgr.getAsync(csvrow.head, csvrow(1))
+//    dummy <- q.fetchDummy(csvrow.head, csvrow(1))
+  } yield dummy
+
+  val reader = CSVReader.open(getClass.getResource(fileName).getFile)
+  val stream = Observable.fromIterable(reader.toStream)
+    .dump("start")
+    .asyncBoundary(OverflowStrategy.BackPressure(10))
+    .mapEval(p => (if(p.head == "サービスID") Task.raiseError(new Exception("this is header")) else Task.now(p)).attempt)
+    .collect{ case Right(v) => v}
+    .mapEval(chainInsertThenSelect)
+    .foreachL(println)
+    .runToFuture
+/*
+    .mapEval(id => Task(updateTable(id)).map(result => (result, id))
+    .mapEval { case (updateResult, id) => ??? }
+ */
+  Await.ready(stream, Duration.Inf)
 
 
 }

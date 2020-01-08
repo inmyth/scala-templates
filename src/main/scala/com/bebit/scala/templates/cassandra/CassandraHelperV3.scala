@@ -13,9 +13,7 @@ object CassandraHelperV3 {
     def cql(args: Any*)(implicit session: Session): Task[PreparedStatement] = {
       val statement = new SimpleStatement(context.raw(args: _*))
       session.prepareAsync(statement)
-      Task.fromFuture(session.prepareAsync(statement))
     }
-
   }
 
   def execute(statement: Task[PreparedStatement], params: Any*)(implicit session: Session): Task[ResultSet] =
@@ -39,14 +37,14 @@ object CassandraHelperV3 {
     Task.fromFuture(p.future)
   }
 
-  implicit def toScalaFuture[T](lFuture: ListenableFuture[T]): Future[T] = {
+  implicit def toScalaFuture[T](lFuture: ListenableFuture[T]): Task[T] = {
     val p = Promise[T]
     Futures.addCallback(lFuture,
       new FutureCallback[T] {
         def onSuccess(result: T) = p.success(result)
         def onFailure(t: Throwable) = p.failure(t)
       })
-    p.future
+    Task.fromFuture(p.future)
   }
 
 
