@@ -1,10 +1,9 @@
-package com.bebit.scala.templates.connection
+package com.bebit.scala.templates.cassandra
 
-import com.bebit.scala.templates.connection.cassandra.CassandraHelper
 import com.datastax.oss.driver.api.core.CqlSession
 
-object CassandraDatastaxBasic extends App {
-  import CassandraHelper._
+object CassandraDatastaxV4Basic extends App {
+ import CassandraHelperV4._
   import monix.execution.Scheduler.Implicits.global
 
   implicit val session = CqlSession
@@ -23,5 +22,3 @@ object CassandraDatastaxBasic extends App {
     .recover{case e => println(e)}
 
 }
-
-

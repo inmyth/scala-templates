@@ -1,4 +1,4 @@
-package com.bebit.scala.templates.connection
+package com.bebit.scala.templates.cassandra
 
 import java.math.BigInteger
 
@@ -23,11 +23,11 @@ import scala.concurrent.duration.Duration
   request.consistency = ONE
 
  */
-object CassandraDatastaxObs extends App {
-  import cassandra.CassandraHelper._
+object CassandraDatastaxV4 extends App {
+  import CassandraHelperV4._
   import monix.execution.Scheduler.Implicits.global
 
-  val fileName = "/csv-samples/sample.csv"
+  val fileName = "/csv-samples/cli_t-30_generated.csv"
   implicit val session = CqlSession.builder()
     .withConfigLoader(DriverConfigLoader.fromClasspath("cassandra-samples/application.conf"))
     .build();
@@ -64,5 +64,5 @@ object CassandraDatastaxObs extends App {
     .runToFuture
 
   Await.ready(stream, Duration.Inf)
-  
+
 }

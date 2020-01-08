@@ -1,11 +1,11 @@
-package com.bebit.scala.templates.connection.cassandra
+package com.bebit.scala.templates.cassandra
 
 import com.datastax.oss.driver.api.core.CqlSession
 import com.datastax.oss.driver.api.core.cql.{AsyncResultSet, PreparedStatement, SimpleStatement}
 import monix.eval.Task
 
 
-object CassandraHelper {
+object CassandraHelperV4 {
 
   implicit class CqlStrings(val context: StringContext) extends AnyVal {
 

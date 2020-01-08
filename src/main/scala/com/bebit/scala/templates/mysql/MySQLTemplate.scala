@@ -1,4 +1,4 @@
-package com.bebit.scala.templates.connection
+package com.bebit.scala.templates.mysql
 
 import java.util.concurrent.TimeUnit
 
